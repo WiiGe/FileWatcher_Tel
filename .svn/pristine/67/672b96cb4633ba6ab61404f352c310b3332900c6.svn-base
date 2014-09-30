@@ -9,18 +9,18 @@ using System.Text;
 using System.Windows.Forms;
 
 using FileWatcher;
-using EMailSender;
-using System.Net;
-using System.Net.Mail;
-using System.Collections;
 
 namespace FileWatcher
 {
-	public partial class Form1Ex : Form
+	public partial class Form1 : Form
 	{
-		WatcherEx fileWatcher = null;
+		Watcher fileWatcher = null;
 
-		public Form1Ex()
+		//--------------------------------------------------------------------------------
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public Form1()
 		{
 			InitializeComponent();
 
@@ -44,37 +44,35 @@ namespace FileWatcher
 			{
 				if (add)
 				{
-					fileWatcher.EventChangedAttribute     += new WatcherExEventHandler(fileWatcher_EventChanged);
-					fileWatcher.EventChangedCreationTime  += new WatcherExEventHandler(fileWatcher_EventChanged);
-					fileWatcher.EventChangedDirectoryName += new WatcherExEventHandler(fileWatcher_EventChanged);
-					fileWatcher.EventChangedFileName      += new WatcherExEventHandler(fileWatcher_EventChanged);
-					fileWatcher.EventChangedLastAccess    += new WatcherExEventHandler(fileWatcher_EventChanged);
-					fileWatcher.EventChangedLastWrite     += new WatcherExEventHandler(fileWatcher_EventChanged);
-					fileWatcher.EventChangedSecurity      += new WatcherExEventHandler(fileWatcher_EventChanged);
-					fileWatcher.EventChangedSize          += new WatcherExEventHandler(fileWatcher_EventChanged);
-					fileWatcher.EventCreated              += new WatcherExEventHandler(fileWatcher_EventCreated);
-					fileWatcher.EventDeleted              += new WatcherExEventHandler(fileWatcher_EventDeleted);
-					fileWatcher.EventDisposed             += new WatcherExEventHandler(fileWatcher_EventDisposed);
-					fileWatcher.EventError                += new WatcherExEventHandler(fileWatcher_EventError);
-					fileWatcher.EventRenamed              += new WatcherExEventHandler(fileWatcher_EventRenamed);
-					fileWatcher.EventPathAvailability     += new WatcherExEventHandler(fileWatcher_EventPathAvailability);
+					fileWatcher.EventChangedAttribute     += new WatcherEventHandler(fileWatcher_EventChanged);
+					fileWatcher.EventChangedCreationTime  += new WatcherEventHandler(fileWatcher_EventChanged);
+					fileWatcher.EventChangedDirectoryName += new WatcherEventHandler(fileWatcher_EventChanged);
+					fileWatcher.EventChangedFileName      += new WatcherEventHandler(fileWatcher_EventChanged);
+					fileWatcher.EventChangedLastAccess    += new WatcherEventHandler(fileWatcher_EventChanged);
+					fileWatcher.EventChangedLastWrite     += new WatcherEventHandler(fileWatcher_EventChanged);
+					fileWatcher.EventChangedSecurity      += new WatcherEventHandler(fileWatcher_EventChanged);
+					fileWatcher.EventChangedSize          += new WatcherEventHandler(fileWatcher_EventChanged);
+					fileWatcher.EventCreated              += new WatcherEventHandler(fileWatcher_EventCreated);
+					fileWatcher.EventDeleted              += new WatcherEventHandler(fileWatcher_EventDeleted);
+					fileWatcher.EventDisposed             += new WatcherEventHandler(fileWatcher_EventDisposed);
+					fileWatcher.EventError                += new WatcherEventHandler(fileWatcher_EventError);
+					fileWatcher.EventRenamed              += new WatcherEventHandler(fileWatcher_EventRenamed);
 				}
 				else
 				{
-					fileWatcher.EventChangedAttribute     -= new WatcherExEventHandler(fileWatcher_EventChanged);
-					fileWatcher.EventChangedCreationTime  -= new WatcherExEventHandler(fileWatcher_EventChanged);
-					fileWatcher.EventChangedDirectoryName -= new WatcherExEventHandler(fileWatcher_EventChanged);
-					fileWatcher.EventChangedFileName      -= new WatcherExEventHandler(fileWatcher_EventChanged);
-					fileWatcher.EventChangedLastAccess    -= new WatcherExEventHandler(fileWatcher_EventChanged);
-					fileWatcher.EventChangedLastWrite     -= new WatcherExEventHandler(fileWatcher_EventChanged);
-					fileWatcher.EventChangedSecurity      -= new WatcherExEventHandler(fileWatcher_EventChanged);
-					fileWatcher.EventChangedSize          -= new WatcherExEventHandler(fileWatcher_EventChanged);
-					fileWatcher.EventCreated              -= new WatcherExEventHandler(fileWatcher_EventCreated);
-					fileWatcher.EventDeleted              -= new WatcherExEventHandler(fileWatcher_EventDeleted);
-					fileWatcher.EventDisposed             -= new WatcherExEventHandler(fileWatcher_EventDisposed);
-					fileWatcher.EventError                -= new WatcherExEventHandler(fileWatcher_EventError);
-					fileWatcher.EventRenamed              -= new WatcherExEventHandler(fileWatcher_EventRenamed);
-					fileWatcher.EventPathAvailability     += new WatcherExEventHandler(fileWatcher_EventPathAvailability);
+					fileWatcher.EventChangedAttribute     -= new WatcherEventHandler(fileWatcher_EventChanged);
+					fileWatcher.EventChangedCreationTime  -= new WatcherEventHandler(fileWatcher_EventChanged);
+					fileWatcher.EventChangedDirectoryName -= new WatcherEventHandler(fileWatcher_EventChanged);
+					fileWatcher.EventChangedFileName      -= new WatcherEventHandler(fileWatcher_EventChanged);
+					fileWatcher.EventChangedLastAccess    -= new WatcherEventHandler(fileWatcher_EventChanged);
+					fileWatcher.EventChangedLastWrite     -= new WatcherEventHandler(fileWatcher_EventChanged);
+					fileWatcher.EventChangedSecurity      -= new WatcherEventHandler(fileWatcher_EventChanged);
+					fileWatcher.EventChangedSize          -= new WatcherEventHandler(fileWatcher_EventChanged);
+					fileWatcher.EventCreated              -= new WatcherEventHandler(fileWatcher_EventCreated);
+					fileWatcher.EventDeleted              -= new WatcherEventHandler(fileWatcher_EventDeleted);
+					fileWatcher.EventDisposed             -= new WatcherEventHandler(fileWatcher_EventDisposed);
+					fileWatcher.EventError                -= new WatcherEventHandler(fileWatcher_EventError);
+					fileWatcher.EventRenamed              -= new WatcherEventHandler(fileWatcher_EventRenamed);
 				}
 			}
 		}
@@ -106,114 +104,35 @@ namespace FileWatcher
 				info.WatchForError     = false;
 				info.WatchPath         = this.textBoxFolderToWatch.Text;
 				info.BufferKBytes      = 8;
-				info.MonitorPathInterval = 250;
-				fileWatcher            = new WatcherEx(info);
+				fileWatcher            = new Watcher(info);
 				ManageEventHandlers(true);
 				result = true;
 			}
 			else
 			{
 				MessageBox.Show("The folder (or file) specified does not exist.\nPlease specify a valid folder or filename.");
+				this.buttonStart.Enabled = false;
 			}
 			return result;
 		}
-		#endregion Helper Methods
-
-		#region ListView Update Delegate Methods and Definitions 
-		private delegate void DelegateCreateListViewItem(string eventName, string filterName, string fileName);
 
 		//--------------------------------------------------------------------------------
 		/// <summary>
-		/// Common ListViewItem creation for all events.  This method checks to see if 
-		/// invoke is required, and makes the appropriate call to the 
-		/// InvokedCreateListViewItem() method.
+		/// Common ListViewItem creation for all events.
 		/// </summary>
 		/// <param name="eventName"></param>
 		/// <param name="filterName"></param>
 		/// <param name="fileName"></param>
 		void CreateListViewItem(string eventName, string filterName, string fileName)
 		{
-			if (this.listView1.InvokeRequired)
-			{
-		        DelegateCreateListViewItem method = new DelegateCreateListViewItem(InvokedCreateListViewItem);
-				Invoke(method, new object[3]{eventName, filterName, fileName} );
-			}
-			else
-			{
-				InvokedCreateListViewItem(eventName, filterName, fileName);
-			}
-		}
-
-		//--------------------------------------------------------------------------------
-		/// <summary>
-		/// The method actually used to update the listview. 
-		/// </summary>
-		/// <param name="eventName"></param>
-		/// <param name="filterName"></param>
-		/// <param name="fileName"></param>
-		private void InvokedCreateListViewItem(string eventName, string filterName, string fileName)
-		{
 			ListViewItem lvi = new ListViewItem();
-			lvi.Text = DateTime.Now.ToString("HH:mm:ss");
+			lvi.Text = DateTime.Now.ToString("HH:mm");
 			lvi.SubItems.Add(new ListViewItem.ListViewSubItem(lvi, eventName)); 
 			lvi.SubItems.Add(new ListViewItem.ListViewSubItem(lvi, filterName)); 
 			lvi.SubItems.Add(new ListViewItem.ListViewSubItem(lvi, fileName));
-			//this.listView1.BeginUpdate();
 			this.listView1.Items.Add(lvi);
-			this.listView1.EnsureVisible(this.listView1.Items.Count - 1);
-			//this.listView1.EndUpdate();
-
-
-
 		}
-
-
-        //--------------------------------------------------------------------------------
-        /// <summary>
-        /// The method actually used to send the notification EMail. 
-        /// </summary>
-        public void InvokeEMailSend() 
-        {
-            MailConfiguration MConfig = new MailConfiguration(@"App.config");
-            System.Net.Mail.SmtpClient smtpClient = new System.Net.Mail.SmtpClient("mail.donghaiair.cn");//MConfig.SMTP_DomainName);
-            smtpClient.UseDefaultCredentials = false;
-            smtpClient.EnableSsl = false;
-            NetworkCredential appCredentials = new NetworkCredential(MConfig.SMTP_UserName, MConfig.SMTP_PassWord);
-            smtpClient.Credentials = appCredentials;
-
-            //EMail From
-            MailAddress source = new MailAddress("wangweizhe@donghaiair.cn", MConfig.FromName, Encoding.UTF8);
-
-            //Mail List
-            MailAddressCollection mailBoxCollection = new MailAddressCollection();
-
-            foreach (DictionaryEntry itemp in MailConfiguration._Recipient)
-            {
-                MailAddress tempAddress = new MailAddress((string)itemp.Value, (string)itemp.Key, System.Text.Encoding.UTF8);
-                mailBoxCollection.Add(tempAddress);
-                Console.WriteLine("Key = {0}, Value = {1}", itemp.Key, itemp.Value);
-            }
-
-            //Build Message Object List
-            foreach (MailAddress tempAdd in mailBoxCollection)
-            {
-                MailMessage tempMeaage = new MailMessage(source, tempAdd);
-                tempMeaage.Subject = MConfig.FromName + "提醒邮件";
-                tempMeaage.SubjectEncoding = Encoding.UTF8;
-                tempMeaage.Body = "距上次接收报文后已有5分钟没有文件更改";
-                tempMeaage.BodyEncoding = Encoding.UTF8;
-
-                //Setting Mail Properties
-
-                tempMeaage.BodyEncoding = System.Text.Encoding.UTF8;
-                tempMeaage.IsBodyHtml = true;
-                smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-                smtpClient.Send(tempMeaage);
-            }
-        }
-
-
-		#endregion ListView Update Delegate Methods and Definitions 
+		#endregion Helper Methods
 
 		#region Watcher Events
 		//--------------------------------------------------------------------------------
@@ -222,7 +141,7 @@ namespace FileWatcher
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void fileWatcher_EventRenamed(object sender, WatcherExEventArgs e)
+		void fileWatcher_EventRenamed(object sender, WatcherEventArgs e)
 		{
 			CreateListViewItem("Renamed", "N/A", (e.Arguments == null) ? "Null argument object": ((RenamedEventArgs)(e.Arguments)).FullPath);
 		}
@@ -233,7 +152,7 @@ namespace FileWatcher
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void fileWatcher_EventError(object sender, WatcherExEventArgs e)
+		void fileWatcher_EventError(object sender, WatcherEventArgs e)
 		{
 			CreateListViewItem("Error", "N/A", (e.Arguments == null) ? "Null argument object": ((EventArgs)(e.Arguments)).ToString());
 		}
@@ -245,7 +164,7 @@ namespace FileWatcher
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void fileWatcher_EventDisposed(object sender, WatcherExEventArgs e)
+		void fileWatcher_EventDisposed(object sender, WatcherEventArgs e)
 		{
 			CreateListViewItem("Disposed", "N/A", (e.Arguments == null) ? "Null argument object": ((EventArgs)(e.Arguments)).ToString());
 		}
@@ -256,7 +175,7 @@ namespace FileWatcher
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void fileWatcher_EventDeleted(object sender, WatcherExEventArgs e)
+		void fileWatcher_EventDeleted(object sender, WatcherEventArgs e)
 		{
 			CreateListViewItem("Deleted", "N/A", (e.Arguments == null) ? "Null argument object": ((FileSystemEventArgs)(e.Arguments)).FullPath);
 		}
@@ -267,7 +186,7 @@ namespace FileWatcher
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void fileWatcher_EventCreated(object sender, WatcherExEventArgs e)
+		void fileWatcher_EventCreated(object sender, WatcherEventArgs e)
 		{
 			CreateListViewItem("Created", "N/A", (e.Arguments == null) ? "Null argument object": ((FileSystemEventArgs)(e.Arguments)).FullPath);
 		}
@@ -278,36 +197,10 @@ namespace FileWatcher
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void fileWatcher_EventChanged(object sender, WatcherExEventArgs e)
+		void fileWatcher_EventChanged(object sender, WatcherEventArgs e)
 		{
 			CreateListViewItem("Change", e.Filter.ToString(), (e.Arguments == null) ? "Null argument object": ((FileSystemEventArgs)(e.Arguments)).FullPath);
 		}
-
-		//--------------------------------------------------------------------------------
-		/// <summary>
-		/// Fired when the availability of the folder has changed.  If it becomes 
-		/// "disconnected", the internal watchers are disabled. When it becomes connected 
-		/// again, the internal watchers are restored.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void fileWatcher_EventPathAvailability(object sender, WatcherExEventArgs e)
-		{
-			string eventName  = "Availability";
-			string filterName = "N/A";
-			string status   = "";
-			if (e.Arguments == null) 
-			{
-				status = "Null argument object";
-			}
-			else
-			{
-				status = (((PathAvailablitiyEventArgs)(e.Arguments)).PathIsAvailable) ? "Connected" 
-				                                                                      : "Disconnected";
-			}
-		    CreateListViewItem(eventName, filterName, status);
-		}
-
 		#endregion Watcher Events
 
 		#region Form Events
@@ -317,7 +210,7 @@ namespace FileWatcher
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		private void Form1Ex_FormClosing(object sender, FormClosingEventArgs e)
+		private void Form1_FormClosing(object sender, FormClosingEventArgs e)
 		{
 			if (fileWatcher != null)
 			{
@@ -415,23 +308,17 @@ namespace FileWatcher
 				}
 			}
 		}
-
-		//--------------------------------------------------------------------------------
-		/// <summary>
-		/// Fired when the user clicks the Clear List button
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		private void buttonClearList_Click(object sender, EventArgs e)
-		{
-			this.listView1.Items.Clear();
-		}
 		#endregion Form Events
 
-        private void listView1_SelectedIndexChanged(object sender, EventArgs e)
-        {
+		//--------------------------------------------------------------------------------
+		private void textBoxFolderToWatch_TextChanged(object sender, EventArgs e)
+		{
+			if (!string.IsNullOrEmpty(this.textBoxFolderToWatch.Text))
+			{
+				this.buttonStart.Enabled = true;
+			}
+		}
 
-        }
 
 	}
 }

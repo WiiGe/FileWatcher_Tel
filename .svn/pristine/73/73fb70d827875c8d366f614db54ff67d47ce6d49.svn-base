@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+  <MailBox>
+    <add key="Wiige" value="601362344@qq.com"/>
+    <add key="Noe" value="wiige@live.com"/>
+    <add key="围着王" value="weizhewang@donghaiair.cn"/>
+    <add key="李经理" value="lizhixin@donghaiair.cn"/>
+  </MailBox>
+</configuration>

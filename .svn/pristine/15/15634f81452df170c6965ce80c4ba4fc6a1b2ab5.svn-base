@@ -9,10 +9,6 @@ using System.Text;
 using System.Windows.Forms;
 
 using FileWatcher;
-using EMailSender;
-using System.Net;
-using System.Net.Mail;
-using System.Collections;
 
 namespace FileWatcher
 {
@@ -166,53 +162,6 @@ namespace FileWatcher
 
 
 		}
-
-
-        //--------------------------------------------------------------------------------
-        /// <summary>
-        /// The method actually used to send the notification EMail. 
-        /// </summary>
-        public void InvokeEMailSend() 
-        {
-            MailConfiguration MConfig = new MailConfiguration(@"App.config");
-            System.Net.Mail.SmtpClient smtpClient = new System.Net.Mail.SmtpClient("mail.donghaiair.cn");//MConfig.SMTP_DomainName);
-            smtpClient.UseDefaultCredentials = false;
-            smtpClient.EnableSsl = false;
-            NetworkCredential appCredentials = new NetworkCredential(MConfig.SMTP_UserName, MConfig.SMTP_PassWord);
-            smtpClient.Credentials = appCredentials;
-
-            //EMail From
-            MailAddress source = new MailAddress("wangweizhe@donghaiair.cn", MConfig.FromName, Encoding.UTF8);
-
-            //Mail List
-            MailAddressCollection mailBoxCollection = new MailAddressCollection();
-
-            foreach (DictionaryEntry itemp in MailConfiguration._Recipient)
-            {
-                MailAddress tempAddress = new MailAddress((string)itemp.Value, (string)itemp.Key, System.Text.Encoding.UTF8);
-                mailBoxCollection.Add(tempAddress);
-                Console.WriteLine("Key = {0}, Value = {1}", itemp.Key, itemp.Value);
-            }
-
-            //Build Message Object List
-            foreach (MailAddress tempAdd in mailBoxCollection)
-            {
-                MailMessage tempMeaage = new MailMessage(source, tempAdd);
-                tempMeaage.Subject = MConfig.FromName + "提醒邮件";
-                tempMeaage.SubjectEncoding = Encoding.UTF8;
-                tempMeaage.Body = "距上次接收报文后已有5分钟没有文件更改";
-                tempMeaage.BodyEncoding = Encoding.UTF8;
-
-                //Setting Mail Properties
-
-                tempMeaage.BodyEncoding = System.Text.Encoding.UTF8;
-                tempMeaage.IsBodyHtml = true;
-                smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
-                smtpClient.Send(tempMeaage);
-            }
-        }
-
-
 		#endregion ListView Update Delegate Methods and Definitions 
 
 		#region Watcher Events

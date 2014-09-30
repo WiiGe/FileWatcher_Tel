@@ -1,0 +1,13 @@
+C:\Users\Maxim\Desktop\GitRoot\FileWatcher_Tel\FileWatcher_Tel\bin\Debug\FileWatcher.exe.config
+C:\Users\Maxim\Desktop\GitRoot\FileWatcher_Tel\FileWatcher_Tel\bin\Debug\FileWatcher.exe.manifest
+C:\Users\Maxim\Desktop\GitRoot\FileWatcher_Tel\FileWatcher_Tel\bin\Debug\FileWatcher.application
+C:\Users\Maxim\Desktop\GitRoot\FileWatcher_Tel\FileWatcher_Tel\bin\Debug\FileWatcher.exe
+C:\Users\Maxim\Desktop\GitRoot\FileWatcher_Tel\FileWatcher_Tel\bin\Debug\FileWatcher.pdb
+C:\Users\Maxim\Desktop\GitRoot\FileWatcher_Tel\FileWatcher_Tel\obj\Debug\FileWatcher.Form1.resources
+C:\Users\Maxim\Desktop\GitRoot\FileWatcher_Tel\FileWatcher_Tel\obj\Debug\FileWatcher.Form1Ex.resources
+C:\Users\Maxim\Desktop\GitRoot\FileWatcher_Tel\FileWatcher_Tel\obj\Debug\FileWatcher.Properties.Resources.resources
+C:\Users\Maxim\Desktop\GitRoot\FileWatcher_Tel\FileWatcher_Tel\obj\Debug\FileWatcher.csproj.GenerateResource.Cache
+C:\Users\Maxim\Desktop\GitRoot\FileWatcher_Tel\FileWatcher_Tel\obj\Debug\FileWatcher.exe.manifest
+C:\Users\Maxim\Desktop\GitRoot\FileWatcher_Tel\FileWatcher_Tel\obj\Debug\FileWatcher.application
+C:\Users\Maxim\Desktop\GitRoot\FileWatcher_Tel\FileWatcher_Tel\obj\Debug\FileWatcher.exe
+C:\Users\Maxim\Desktop\GitRoot\FileWatcher_Tel\FileWatcher_Tel\obj\Debug\FileWatcher.pdb
