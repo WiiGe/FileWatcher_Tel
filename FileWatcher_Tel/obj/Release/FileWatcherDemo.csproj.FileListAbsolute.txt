@@ -1,0 +1,12 @@
+C:\Users\Maxim\Desktop\FileWatcherDemo\FileWatcherDemo\bin\Release\FileWatcherDemo.exe.manifest
+C:\Users\Maxim\Desktop\FileWatcherDemo\FileWatcherDemo\bin\Release\FileWatcherDemo.application
+C:\Users\Maxim\Desktop\FileWatcherDemo\FileWatcherDemo\bin\Release\FileWatcherDemo.exe
+C:\Users\Maxim\Desktop\FileWatcherDemo\FileWatcherDemo\bin\Release\FileWatcherDemo.pdb
+C:\Users\Maxim\Desktop\FileWatcherDemo\FileWatcherDemo\obj\Release\FileWatcherDemo.Form1.resources
+C:\Users\Maxim\Desktop\FileWatcherDemo\FileWatcherDemo\obj\Release\FileWatcherDemo.Form1Ex.resources
+C:\Users\Maxim\Desktop\FileWatcherDemo\FileWatcherDemo\obj\Release\FileWatcherDemo.Properties.Resources.resources
+C:\Users\Maxim\Desktop\FileWatcherDemo\FileWatcherDemo\obj\Release\FileWatcherDemo.csproj.GenerateResource.Cache
+C:\Users\Maxim\Desktop\FileWatcherDemo\FileWatcherDemo\obj\Release\FileWatcherDemo.exe.manifest
+C:\Users\Maxim\Desktop\FileWatcherDemo\FileWatcherDemo\obj\Release\FileWatcherDemo.application
+C:\Users\Maxim\Desktop\FileWatcherDemo\FileWatcherDemo\obj\Release\FileWatcherDemo.exe
+C:\Users\Maxim\Desktop\FileWatcherDemo\FileWatcherDemo\obj\Release\FileWatcherDemo.pdb
