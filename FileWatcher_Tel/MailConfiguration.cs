@@ -1,17 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Diagnostics;
-using System.IO;
 using System.Configuration;
 using System.Collections;
 using System.Xml;
 
 namespace EMailSender
 {
-    class MailConfiguration
+    public class MailConfiguration
     {
         //SMTP Server Setting Here
         //-----------------------------------------------------------------------------------------------------------------
@@ -23,10 +18,17 @@ namespace EMailSender
             }
             set
             {
-                //Valid IP Address String
-                if (MailConfiguration.IPValidator(value.Trim()))
+                if (!string.IsNullOrEmpty(value))
                 {
-                    _SMTP_IP = value.Trim();
+                    //Valid IP Address String
+                    if (MailConfiguration.IPValidator(value.Trim()))
+                    {
+                        _SMTP_IP = value.Trim();
+                    }
+                }
+                else 
+                {
+                    _SMTP_IP = default(string);
                 }
             }
         }
@@ -36,19 +38,26 @@ namespace EMailSender
         { 
             get
             {
-                return _SMTP_DomainName;
+                return _SmtpDomainName;
             }
             set
             {
-                if(DomainNameValidator(value.Trim()))
+                if (!string.IsNullOrEmpty(value))
                 {
-                    _SMTP_DomainName = value.Trim();
+                    if (DomainNameValidator(value.Trim()))
+                    {
+                        _SmtpDomainName = value.Trim();
+                    }
+                }
+                else 
+                {
+                    _SmtpDomainName = default(string);
                 }
             }
         }
-        private string _SMTP_DomainName;
+        private string _SmtpDomainName;
 
-        public string SMTP_UserName;
+        public static string SMTP_UserName;
         public string SMTP_PassWord;
         public bool SMTP_SSL_Enable;
        
@@ -83,13 +92,13 @@ namespace EMailSender
             {
                 XmlAttributeCollection arrt = element.Attributes;
 
-                if (arrt[0].Value != "")
+                if (!string.IsNullOrEmpty(arrt[0].Value))
                 {
                     _Recipient.Add(arrt[0].Value, arrt[1].Value);
                 }
                 else
                 {
-                    _Recipient.Add("Dear Administrator", arrt[1].Value);
+                    _Recipient.Add("Dear Administrator#" + DateTime.UtcNow.ToString(), arrt[1].Value);
                 }
 
                 //for (int i = 0; i <= element.Attributes.Count - 1; i++)
@@ -113,7 +122,11 @@ namespace EMailSender
         public static Hashtable _Recipient = new Hashtable();
         private static int MailReciverCounter;
         //-----------------------------------------------------------------------------------------------------------------
-        
+        /// <summary>
+        /// Indicate How Long The Time Should be modified,or trigger the Mail/SMS alarm
+        /// </summary>
+        public static TimeSpan timerAlterSpan = default(TimeSpan);
+
         //-----------------------------------------------------------------------------------------------------------------
         //Some Validation Function
         protected static bool EMailValidator(string args)
@@ -159,7 +172,7 @@ namespace EMailSender
                 switch (keyValueElement.Key)
                 {
                     case "SMTP-IP":
-                        if (keyValueElement.Value == null || keyValueElement.Value == "")
+                        if (string.IsNullOrEmpty(keyValueElement.Value))
                         {
                             SMTP_IP = default(string);
                         }
@@ -169,7 +182,7 @@ namespace EMailSender
                         }
                         break;
                     case "SMTP-DN":
-                        if (keyValueElement.Value == null || keyValueElement.Value == "")
+                        if (string.IsNullOrEmpty(keyValueElement.Value))
                         {
                             SMTP_DomainName = default(string);
                         }
@@ -179,7 +192,7 @@ namespace EMailSender
                         }
                         break;
                     case "SMTP-LoginAccount":
-                        if (keyValueElement.Value == null || keyValueElement.Value == "")
+                        if (string.IsNullOrEmpty(keyValueElement.Value))
                         {
                             SMTP_UserName = default(string);
                         }
@@ -189,7 +202,7 @@ namespace EMailSender
                         }
                         break;
                     case "SMTP-LoginPassWord":
-                        if (keyValueElement.Value == null || keyValueElement.Value == "")
+                        if (string.IsNullOrEmpty(keyValueElement.Value))
                         {
                             SMTP_PassWord = default(string);
                         }
@@ -199,13 +212,23 @@ namespace EMailSender
                         }
                         break;
                     case "SMTP-EnableSSL":
-                        if (keyValueElement.Value == null || keyValueElement.Value == "")
+                        if (string.IsNullOrEmpty(keyValueElement.Value))
                         {
                             SMTP_SSL_Enable = default(bool);
                         }
                         else
                         {
                             SMTP_SSL_Enable = Boolean.Parse(keyValueElement.Value);
+                        }
+                        break;
+                    case "AlarmTimeSpan":
+                        if (string.IsNullOrEmpty(keyValueElement.Value))
+                        {
+                            timerAlterSpan = default(TimeSpan);
+                        }
+                        else
+                        {
+                            timerAlterSpan = TimeSpan.Parse(keyValueElement.Value);//set The Alarting TimeSpan 
                         }
                         break;
                     default:

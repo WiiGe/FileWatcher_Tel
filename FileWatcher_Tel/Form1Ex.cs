@@ -19,7 +19,7 @@ namespace FileWatcher
 	public partial class Form1Ex : Form
 	{
 		WatcherEx fileWatcher = null;
-
+        public static MailConfiguration MConfig = new MailConfiguration(@"App.config");
 		public Form1Ex()
 		{
 			InitializeComponent();
@@ -154,7 +154,7 @@ namespace FileWatcher
 		private void InvokedCreateListViewItem(string eventName, string filterName, string fileName)
 		{
 			ListViewItem lvi = new ListViewItem();
-			lvi.Text = DateTime.Now.ToString("HH:mm:ss");
+            lvi.Text = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 			lvi.SubItems.Add(new ListViewItem.ListViewSubItem(lvi, eventName)); 
 			lvi.SubItems.Add(new ListViewItem.ListViewSubItem(lvi, filterName)); 
 			lvi.SubItems.Add(new ListViewItem.ListViewSubItem(lvi, fileName));
@@ -163,26 +163,81 @@ namespace FileWatcher
 			this.listView1.EnsureVisible(this.listView1.Items.Count - 1);
 			//this.listView1.EndUpdate();
 
-
-
+            if (filterName == "Size")
+            {
+                StreamWriter log = new StreamWriter(System.AppDomain.CurrentDomain.SetupInformation.ApplicationBase + "log.txt", true);
+                log.WriteLine("time:" + lvi.Text + ",eventName:" + eventName + ",filterName:" + filterName + ",fileName:" + fileName);
+                log.Close();
+                log.Dispose();
+                   
+            }   
 		}
+
+        //--------------------------------------------------------------------------------
+        /// <summary>
+        /// The method check log.txt,countdown the time and invoke InvokeEMailSend() 
+        /// </summary>
+        /// <param name="args">Get From Setting and Count Down Number</param>
+        public static void ConditionCheckerForEMailSend()
+        {
+            StreamReader logreader = new StreamReader(System.AppDomain.CurrentDomain.SetupInformation.ApplicationBase + "log.txt");
+            string tempFileNameAndPath = null;
+            string tempFileChangedTime = null;
+            while (logreader.Peek() >= 0)
+            {
+                string[] tempStr = logreader.ReadLine().Split(',',':');
+                if (tempFileNameAndPath == null)
+                {
+                    tempFileNameAndPath = tempStr[9] + ":" + tempStr[10];
+                    tempFileChangedTime = tempStr[1] + ":" + tempStr[2] + ":" + tempStr[3];
+                }
+                //Record The Last Size Changed Time Of one File
+                if (tempFileNameAndPath == (tempStr[9] + ":" + tempStr[10]))
+                {
+                    DateTime tempFileChangedDateTime = default(DateTime);
+                    DateTime currentLineDateTime = default(DateTime);
+                    TimeSpan timeDiff = default(TimeSpan);
+                    if (DateTime.TryParse(tempFileChangedTime, out tempFileChangedDateTime) && DateTime.TryParse(tempStr[1] + ":" + tempStr[2] + ":" + tempStr[3], out currentLineDateTime))
+                    {
+                        timeDiff = tempFileChangedDateTime - currentLineDateTime;
+                    }
+                    switch (TimeSpan.Compare(timeDiff, EMailSender.MailConfiguration.timerAlterSpan))
+                    {
+                        case -1:
+                            break;
+                        //Time Difference is equal to the Setting value
+                        case 0:
+                            InvokeEMailSend(MConfig, timeDiff);
+                            break;
+                        //Time Difference is lager than the Setting value
+                        case 1:
+                            InvokeEMailSend(MConfig, timeDiff);
+                            break;
+                    }
+       
+                }
+                tempFileNameAndPath = null;
+                tempFileChangedTime = null;
+            }
+            logreader.Close();
+            logreader.Dispose();
+        }
 
 
         //--------------------------------------------------------------------------------
         /// <summary>
         /// The method actually used to send the notification EMail. 
         /// </summary>
-        public void InvokeEMailSend() 
+        public static void InvokeEMailSend(MailConfiguration argMConfig, TimeSpan argTS) 
         {
-            MailConfiguration MConfig = new MailConfiguration(@"App.config");
             System.Net.Mail.SmtpClient smtpClient = new System.Net.Mail.SmtpClient("mail.donghaiair.cn");//MConfig.SMTP_DomainName);
             smtpClient.UseDefaultCredentials = false;
             smtpClient.EnableSsl = false;
-            NetworkCredential appCredentials = new NetworkCredential(MConfig.SMTP_UserName, MConfig.SMTP_PassWord);
+            NetworkCredential appCredentials = new NetworkCredential(MailConfiguration.SMTP_UserName, argMConfig.SMTP_PassWord);
             smtpClient.Credentials = appCredentials;
 
             //EMail From
-            MailAddress source = new MailAddress("wangweizhe@donghaiair.cn", MConfig.FromName, Encoding.UTF8);
+            MailAddress source = new MailAddress("wangweizhe@donghaiair.cn", argMConfig.FromName, Encoding.UTF8);
 
             //Mail List
             MailAddressCollection mailBoxCollection = new MailAddressCollection();
@@ -198,9 +253,9 @@ namespace FileWatcher
             foreach (MailAddress tempAdd in mailBoxCollection)
             {
                 MailMessage tempMeaage = new MailMessage(source, tempAdd);
-                tempMeaage.Subject = MConfig.FromName + "提醒邮件";
+                tempMeaage.Subject = argMConfig.FromName + "提醒邮件";
                 tempMeaage.SubjectEncoding = Encoding.UTF8;
-                tempMeaage.Body = "距上次接收报文后已有5分钟没有文件更改";
+                tempMeaage.Body = "距上次接收报文后已有" + argTS + "分钟没有文件更改";
                 tempMeaage.BodyEncoding = Encoding.UTF8;
 
                 //Setting Mail Properties

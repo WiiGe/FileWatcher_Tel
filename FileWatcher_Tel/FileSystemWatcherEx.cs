@@ -133,6 +133,7 @@ namespace FileWatcher
 						RaiseEventNetworkPathAvailablity();
 					}
 				}
+                Form1Ex.ConditionCheckerForEMailSend();
 				Thread.Sleep(this.Interval);
 			}
 		}
